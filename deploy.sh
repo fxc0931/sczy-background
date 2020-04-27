@@ -4,7 +4,7 @@
 set -e
 
 # 构建
-npm run build
+npm run build:prod
 
 # cd 到构建输出的目录下 
 cd dist
@@ -17,7 +17,7 @@ git add -A
 git commit -m 'deploy'
 
 # 部署到 https://<USERNAME>.github.io
-git push -f git@github.com:fxc0931/sjzy-background.git master:gh-pages
+git push -f git@github.com:fxc0931/sczy-background.git master:gh-pages
 
 # 部署到 https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
