@@ -182,7 +182,9 @@ export default {
                 type: "success",
                 duration: 2000
               });
+              this.postForm = Object.assign({}, this.defaultForm);
               this.loading = false;
+              this.$router.go({name: 'Example'})
             });
           } else {
             let url = "/news/edit/" + this.newsId;
@@ -194,7 +196,7 @@ export default {
                 duration: 2000
               });
               this.loading = false;
-              // Object.assign(this.postForm , defaultForm)
+              this.$router.go({name: 'Example'})
             });
           }
         } else {
@@ -223,6 +225,7 @@ export default {
             showClose: true,
             duration: 1000
           });
+          this.$router.go({name: 'Example'})
         });
       } else {
         let url = "/news/edit/" + this.newsId;
@@ -233,7 +236,7 @@ export default {
             showClose: true,
             duration: 1000
           });
-          // Object.assign(this.postForm , defaultForm)
+          this.$router.go({name: 'Example'})
         });
       }
     }

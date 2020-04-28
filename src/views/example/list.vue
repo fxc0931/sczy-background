@@ -8,25 +8,25 @@
       highlight-current-row
       style="width: 100%"
     >
-      <el-table-column width="180px" align="center" label="Date">
+      <el-table-column width="180px" align="center" label="日期">
         <template slot-scope="scope">
           <span>{{formatDate(scope.row.display_time)}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="Author">
+      <el-table-column width="120px" align="center" label="作者">
         <template slot-scope="scope">
           <span>{{ scope.row.author }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column class-name="status-col" label="Status" width="110">
+      <el-table-column class-name="status-col" label="状态" width="110">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" label="Title">
+      <el-table-column min-width="300px" label="标题">
         <template slot-scope="{row}">
           <router-link :to="'/article/edit/'+row.id" class="link-type">
             <span>{{ row.title }}</span>
@@ -34,7 +34,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="190">
+      <el-table-column align="center" label="操作" width="190">
         <template slot-scope="scope">
           <el-row>
             <el-col :span="12">
@@ -109,7 +109,6 @@ export default {
         page: 1
       };
       this.$api.fetchGet("/news", param).then(response => {
-        console.log(response.data.items, "ss");
         this.list = response.data.items;
         this.total = response.data.total;
         this.listLoading = false;
@@ -127,8 +126,7 @@ export default {
       this.dialogVisible = true;
     },
     formatDate(date) {
-      const tempDate = moment.utc(date).local()
-      return date ? tempDate.format('YYYY-MM-DD HH:mm') : null
+      return date ? moment(date).format('YYYY-MM-DD HH:mm') : null
     },
   }
 };
