@@ -114,7 +114,8 @@ export default {
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }]
       },
-      tempRoute: {}
+      tempRoute: {},
+      loadingFullScreen: {}
     };
   },
   computed: {
@@ -125,6 +126,7 @@ export default {
   created() {
     if (this.isEdit) {
       this.newsId = this.$route.params && this.$route.params.id;
+      this.openFullScreen()
       this.fetchData(this.newsId);
     }
 
@@ -134,6 +136,14 @@ export default {
     this.tempRoute = Object.assign({}, this.$route);
   },
   methods: {
+    openFullScreen() {
+      this.loadingFullScreen = this.$loading({
+        lock: true,
+        text: "加载中，请稍后...",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      })
+    },
     fetchData(id) {
       let url = "/news/" + id;
       this.$api.fetchGet(url).then(response => {
@@ -143,6 +153,7 @@ export default {
         this.postForm.image_uri = response.data.image_uri;
         this.postForm.display_time = response.data.display_time;
         this.postForm.author = response.data.author;
+        this.loadingFullScreen.close()
       });
     },
     setTagsViewTitle() {
@@ -157,19 +168,6 @@ export default {
       document.title = `${title} - ${this.postForm.id}`;
     },
     submitForm() {
-      //   console.log(this.postForm);
-      //     const AllDataFields = {
-      //     author: 'fx',
-      //     content: '"<p>dsfsf</p><p><audio style="display: none;" controls="controls"></audio></p>"',
-      //     content_short: 'fxcfxc',
-      //     image_uri: 'string is too large to edit',
-      //     title: 'FXC',
-      //     status: 'published',
-      //     display_time: '2012'
-      // }
-      //   this.$api.fetchPost('/news/add', AllDataFields).then((response) => {
-
-      //   })
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true;
@@ -182,9 +180,8 @@ export default {
                 type: "success",
                 duration: 2000
               });
-              this.postForm = Object.assign({}, this.defaultForm);
+              this.postForm = Object.assign({}, defaultForm);
               this.loading = false;
-              this.$router.go({name: 'Example'})
             });
           } else {
             let url = "/news/edit/" + this.newsId;
@@ -196,7 +193,6 @@ export default {
                 duration: 2000
               });
               this.loading = false;
-              this.$router.go({name: 'Example'})
             });
           }
         } else {
@@ -225,7 +221,6 @@ export default {
             showClose: true,
             duration: 1000
           });
-          this.$router.go({name: 'Example'})
         });
       } else {
         let url = "/news/edit/" + this.newsId;
@@ -236,7 +231,6 @@ export default {
             showClose: true,
             duration: 1000
           });
-          this.$router.go({name: 'Example'})
         });
       }
     }

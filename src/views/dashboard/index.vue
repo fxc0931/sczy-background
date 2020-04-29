@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-container">
     <component :is="currentRole" />
+    <!-- <h1>四川中医平台</h1> -->
   </div>
 </template>
 

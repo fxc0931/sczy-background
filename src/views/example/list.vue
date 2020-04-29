@@ -54,6 +54,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-button   v-if="list.length>0"  size="small" type="primary" :loading="listLoading" @click="getList">刷新列表</el-button>
+          <el-pagination
+            v-if="list.length>0 && !listLoading"
+            background
+            style="float: right"
+            layout="prev, pager, next"
+            :total="total"
+            :page-size="pageSize"
+            :current-page.sync="page"
+            @current-change="getList"
+          />
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确定删除这篇文章？</span>
       <span slot="footer" class="dialog-footer">
@@ -61,13 +72,6 @@
         <el-button type="primary" @click="deleteNews()">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getList"
-    />-->
   </div>
 </template>
 
@@ -88,9 +92,11 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      pageSize: 10,
       dialogVisible: false,
       newsId: 0,
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -106,7 +112,7 @@ export default {
     getList() {
       this.listLoading = true;
       let param = {
-        page: 1
+        page: this.page
       };
       this.$api.fetchGet("/news", param).then(response => {
         this.list = response.data.items;
