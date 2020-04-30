@@ -1,5 +1,5 @@
 <template>
-  <div class="createPost-container">
+  <div class="createPost-container" v-loading="loadingFullScreen">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <el-button
@@ -108,6 +108,7 @@ export default {
     return {
       newsId: 0,
       postForm: Object.assign({}, defaultForm),
+      compareForm: Object.assign({}, defaultForm),
       loading: false,
       rules: {
         image_uri: [{ validator: validateRequire }],
@@ -115,7 +116,7 @@ export default {
         content: [{ validator: validateRequire }]
       },
       tempRoute: {},
-      loadingFullScreen: {}
+      loadingFullScreen: false
     };
   },
   computed: {
@@ -123,37 +124,44 @@ export default {
       return this.postForm.content_short.length;
     }
   },
+  beforeDestroy() {
+    if (
+      JSON.stringify(this.compareForm) !== JSON.stringify(this.postForm) &&
+      this.postForm.status !== "已发布"
+    ) {
+      if (this.postForm.content.length === 0) {
+        this.postForm.content = "内容";
+      } else if (this.postForm.title.length === 0) {
+        this.postForm.title = "标题";
+      }
+      this.draftForm();
+    }
+  },
   created() {
     if (this.isEdit) {
       this.newsId = this.$route.params && this.$route.params.id;
-      this.openFullScreen()
+      this.loadingFullScreen = true;
       this.fetchData(this.newsId);
     }
 
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
-    this.tempRoute = Object.assign({}, this.$route);
+    // this.tempRoute = Object.assign({}, this.$route);
   },
   methods: {
-    openFullScreen() {
-      this.loadingFullScreen = this.$loading({
-        lock: true,
-        text: "加载中，请稍后...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      })
-    },
     fetchData(id) {
       let url = "/news/" + id;
       this.$api.fetchGet(url).then(response => {
-        this.postForm.title = response.data.title;
-        this.postForm.content_short = response.data.content_short;
-        this.postForm.content = response.data.content;
-        this.postForm.image_uri = response.data.image_uri;
-        this.postForm.display_time = response.data.display_time;
-        this.postForm.author = response.data.author;
-        this.loadingFullScreen.close()
+        // this.postForm.title = response.data.title;
+        // this.postForm.content_short = response.data.content_short;
+        // this.postForm.content = response.data.content;
+        // this.postForm.image_uri = response.data.image_uri;
+        // this.postForm.display_time = response.data.display_time;
+        // this.postForm.author = response.data.author;
+        this.compareForm = Object.assign({}, response.data);
+        this.postForm = Object.assign({}, response.data);
+        this.loadingFullScreen = false;
       });
     },
     setTagsViewTitle() {
