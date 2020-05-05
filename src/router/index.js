@@ -89,7 +89,7 @@ export const constantRoutes = [
     redirect: '/article/list',
     name: 'Example',
     meta: {
-      title: '文章',
+      title: '中医资讯',
       icon: 'example'
     },
     children: [
